@@ -5,10 +5,10 @@
   <meta name="google-site-verification" content="-G02RT3TmMCCj2fzRMaoy-EPeX9jHYQM7LE2gnpBhCs" />
   
   
-  <title>RE: Stardew Valley | s1s1fo&#39;s Blog</title>
+  <title>Decompilando y modificando un juego de Unity para Android | s1s1fo&#39;s Blog</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
   <meta property="og:type" content="article">
-<meta property="og:title" content="RE: Stardew Valley">
+<meta property="og:title" content="Decompilando y modificando un juego de Unity para Android">
 <meta property="og:url" content="https://calana2.github.io/2026/06/03/Decompiling-Stardew-Valley/index.html">
 <meta property="og:site_name" content="s1s1fo&#39;s Blog">
 <meta property="og:locale" content="en_US">
@@ -27,10 +27,9 @@
 <meta property="og:image" content="https://calana2.github.io/img/stardew_valley_medit1.png">
 <meta property="og:image" content="https://calana2.github.io/img/stardew_valley_medit.gif">
 <meta property="article:published_time" content="2026-06-03T13:46:46.000Z">
-<meta property="article:modified_time" content="2026-06-11T11:48:57.335Z">
+<meta property="article:modified_time" content="2026-07-04T21:27:14.080Z">
 <meta property="article:author" content="s1s1fo">
 <meta property="article:tag" content="game hacking">
-<meta property="article:tag" content="spanish">
 <meta property="article:tag" content="reverse engineering">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:image" content="https://calana2.github.io/img/stardew_valley_logo.png">
@@ -110,7 +109,7 @@
         
   
     <h1 class="p-name article-title" itemprop="headline name">
-      RE: Stardew Valley
+      Decompilando y modificando un juego de Unity para Android
     </h1>
   
 
@@ -130,7 +129,7 @@
 <li><a href="#Modificacion-de-assets">Modificación de assets</a></li>
 <li><a href="#Modificacion-de-c%C3%B3digo">Modificación de código</a></li>
 <li><a href="#Cheats">Cheats</a></li>
-<li><a href="#Depuracion-de-juegos-en-Android-sin-root">Depuración de juegos en Android sin root</a></li>
+<li><a href="#Modificacion-de-memoria-en-Android-sin-root">Modificación de memoria en Android sin root</a></li>
 <li><a href="#Conclusiones">Conclusiones</a></li>
 </ul>
 <h2 id="Introduccion"><a href="#Introduccion" class="headerlink" title="Introducción"></a>Introducción</h2><p>En este artículo cubriré el proceso de ingeniería inversa de un juego de Unity para Android. La versión utilizada fue la 1.4.5. Se puede descargar <a target="_blank" rel="noopener" href="https://www.apksum.com/download/com.chucklefish.stardewvalley_1.4.5.139_free">aquí</a>.</p>
@@ -189,7 +188,7 @@
 <p>El error ocurre en la llamada a <code>CheckUsingServerManagedPolicy</code> en <code>OnCreatePartTwo</code>.<br><img src="/img/stardew_valley_antitamper.png"></img></p>
 <p>No revisé a fondo su funcionamiento pero se puede asumir que hace algún tipo de verificación de integridad contra los assemblies. Si eliminamos esta llamada nuestros cambios se aplicarán sin problemas al juego. En esta ocasión utilicé “Editar instrucciones IL…” en lugar de “Editar método (C#) …”, este método es más preciso si tienes dominio de CIL. Solo reemplacé <code>ldarg.0</code> y <code>call</code> por instrucciones <code>nop</code>(No OPeration):</p>
 <p><img src="/img/stardew_valley_patch_antitamper1.png"></img><br><img src="/img/stardew_valley_patch_antitamper2.png"></img><br><img src="/img/stardew_valley_patch.gif"></img></p>
-<h1 id="Depuracion-de-juegos-en-Android-sin-root"><a href="#Depuracion-de-juegos-en-Android-sin-root" class="headerlink" title="Depuración de juegos en Android sin root"></a>Depuración de juegos en Android sin root</h1><p>En Windows y Linux tenemos <code>CheatEngine</code>, posiblemente el mejor escáner de memoria &#x2F; depurador para modificar juegos jamás creado. En Android los equivalentes a CheatEngine <a target="_blank" rel="noopener" href="https://www.reddit.com/r/AndroidGaming/comments/1ajpbuc/can_somebody_suggest_me_any_cheat_engine/">están limitados por la ausencia de permisos de root en estos dispositivos</a>. Una alternativa que encontré es <a target="_blank" rel="noopener" href="https://github.com/sterrasec/apk-medit"><code>medit</code></a>, una herramienta de terminal que nos permite hacer cambios sencillos que en la mayoría de los casos suelen bastar. </p>
+<h1 id="Modificacion-de-memoria-en-Android-sin-root"><a href="#Modificacion-de-memoria-en-Android-sin-root" class="headerlink" title="Modificación de memoria en Android sin root"></a>Modificación de memoria en Android sin root</h1><p>En Windows y Linux tenemos <code>CheatEngine</code>, posiblemente el mejor escáner de memoria &#x2F; depurador para modificar juegos jamás creado. En Android los equivalentes a CheatEngine <a target="_blank" rel="noopener" href="https://www.reddit.com/r/AndroidGaming/comments/1ajpbuc/can_somebody_suggest_me_any_cheat_engine/">están limitados por la ausencia de permisos de root en estos dispositivos</a>. Una alternativa que encontré es <a target="_blank" rel="noopener" href="https://github.com/sterrasec/apk-medit"><code>medit</code></a>, una herramienta de terminal que nos permite hacer cambios sencillos que en la mayoría de los casos suelen bastar. </p>
 <p>La herramienta se ejecuta bajo los mismos privilegios que el proceso objetivo. Se debe ejecutar <code>run-as &lt;package&gt;</code> para obtener los UID&#x2F;GID de la aplicación especificada y así <code>medit</code> tenga acceso a lectura&#x2F;escritura a los archivos privados de la app. El comando <code>run-as</code> necesita que la aplicación tenga el atributo <code>android:debuggable=&quot;true&quot;</code> en su <code>AndroidManifest.xml</code>. Esto se puede hacer con apkutil pero ya que estamos encontré <a target="_blank" rel="noopener" href="https://github.com/julKali/makeDebuggable/blob/master/makeDebuggable.py">este script</a> que hace eso mismo.</p>
 <p>Probemos su funcionamiento cambiando la cantidad de dinero del jugador. Agregamos primero la línea para hacerlo depurable al script y comentamos la que agrega el parche anterior:</p>
 <figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># Reemplazar codigo</span></span><br><span class="line"><span class="comment">#cp ../StardewValley_modified.dll assemblies/StardewValley.dll</span></span><br><span class="line"><span class="comment"># Hacer depurable</span></span><br><span class="line">../makeDebuggable.py xml AndroidManifest.xml AndroidManifest.xml</span><br></pre></td></tr></table></figure>
@@ -214,11 +213,11 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="https://calana2.github.io/2026/06/03/Decompiling-Stardew-Valley/" data-id="cmq3wh1px0000bdi51ivg0pno" data-title="RE: Stardew Valley" class="article-share-link"><span class="fa fa-share">Share</span></a>
+      <a data-url="https://calana2.github.io/2026/06/03/Decompiling-Stardew-Valley/" data-id="cmq3wh1px0000bdi51ivg0pno" data-title="Decompilando y modificando un juego de Unity para Android" class="article-share-link"><span class="fa fa-share">Share</span></a>
       
       
       
-  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/game-hacking/" rel="tag">game hacking</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/reverse-engineering/" rel="tag">reverse engineering</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/spanish/" rel="tag">spanish</a></li></ul>
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/game-hacking/" rel="tag">game hacking</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/reverse-engineering/" rel="tag">reverse engineering</a></li></ul>
 
     </footer>
   </div>
@@ -226,10 +225,19 @@
     
 <nav id="article-nav">
   
+    <a href="/2026/06/22/GBA-hacking/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Newer</strong>
+      <div class="article-nav-title">
+        
+          Una pequeña introducción al ROM hacking
+        
+      </div>
+    </a>
+  
   
     <a href="/2026/05/20/Analyzing-Violet-And-The-Lost-Colors/" id="article-nav-older" class="article-nav-link-wrap">
       <strong class="article-nav-caption">Older</strong>
-      <div class="article-nav-title">RE: Violet And The Lost Colors</div>
+      <div class="article-nav-title">Analizando un juego de RPGMaker</div>
     </a>
   
 </nav>
@@ -256,7 +264,7 @@
   <div class="widget-wrap">
     <h3 class="widget-title">Tags</h3>
     <div class="widget">
-      <ul class="tag-list" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="/tags/binary-exploitation/" rel="tag">binary exploitation</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/english/" rel="tag">english</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/game-hacking/" rel="tag">game hacking</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/reverse-engineering/" rel="tag">reverse engineering</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/spanish/" rel="tag">spanish</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/wargame/" rel="tag">wargame</a></li></ul>
+      <ul class="tag-list" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="/tags/binary-exploitation/" rel="tag">binary exploitation</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/english/" rel="tag">english</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/game-hacking/" rel="tag">game hacking</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/reverse-engineering/" rel="tag">reverse engineering</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/wargame/" rel="tag">wargame</a></li></ul>
     </div>
   </div>
 
@@ -266,7 +274,7 @@
   <div class="widget-wrap">
     <h3 class="widget-title">Tag Cloud</h3>
     <div class="widget tagcloud">
-      <a href="/tags/binary-exploitation/" style="font-size: 13.33px;">binary exploitation</a> <a href="/tags/english/" style="font-size: 10px;">english</a> <a href="/tags/game-hacking/" style="font-size: 16.67px;">game hacking</a> <a href="/tags/reverse-engineering/" style="font-size: 16.67px;">reverse engineering</a> <a href="/tags/spanish/" style="font-size: 20px;">spanish</a> <a href="/tags/wargame/" style="font-size: 13.33px;">wargame</a>
+      <a href="/tags/binary-exploitation/" style="font-size: 15px;">binary exploitation</a> <a href="/tags/english/" style="font-size: 10px;">english</a> <a href="/tags/game-hacking/" style="font-size: 20px;">game hacking</a> <a href="/tags/reverse-engineering/" style="font-size: 20px;">reverse engineering</a> <a href="/tags/wargame/" style="font-size: 15px;">wargame</a>
     </div>
   </div>
 
@@ -288,11 +296,15 @@
       <ul>
         
           <li>
-            <a href="/2026/06/03/Decompiling-Stardew-Valley/">RE: Stardew Valley</a>
+            <a href="/2026/06/22/GBA-hacking/">Una pequeña introducción al ROM hacking</a>
           </li>
         
           <li>
-            <a href="/2026/05/20/Analyzing-Violet-And-The-Lost-Colors/">RE: Violet And The Lost Colors</a>
+            <a href="/2026/06/03/Decompiling-Stardew-Valley/">Decompilando y modificando un juego de Unity para Android</a>
+          </li>
+        
+          <li>
+            <a href="/2026/05/20/Analyzing-Violet-And-The-Lost-Colors/">Analizando un juego de RPGMaker</a>
           </li>
         
           <li>
@@ -301,10 +313,6 @@
         
           <li>
             <a href="/2026/02/24/pwnable-kr-Toddler-s-Bottle/">pwnable.kr series (1) - Toddler&#39;s Bottle</a>
-          </li>
-        
-          <li>
-            <a href="/2025/09/05/Hacking-Kingdom-Rush-es/">RE: Kingdom Rush Frontiers</a>
           </li>
         
       </ul>
